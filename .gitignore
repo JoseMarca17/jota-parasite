@@ -1,0 +1,47 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+*.freezed.dart
+*.g.dart
+
+# Android build output and signing credentials
+android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/key.properties
+*.jks
+*.keystore
+*.p12
+
+# iOS / macOS generated files
+ios/Flutter/.last_build_id
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+ios/.symlinks/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Pods/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local environment and secrets. Keep sanitized templates, never real values.
+.env
+.env.*
+!.env.example
+*.local
+secrets.json
+credentials.json
+
+# Keep pubspec.lock tracked for this application so dependency versions are reproducible.
