@@ -1,32 +1,44 @@
 # Jota Parasite
 
-Aplicación móvil personal de productividad gamificada, organizada por espacios de trabajo y acompañada por una mascota sarcástica. La interfaz usa Flutter y Material 3; la integración con Supabase se incorporará en una etapa posterior.
+Aplicación móvil personal de productividad gamificada, organizada por espacios de trabajo y acompañada por una mascota sarcástica. La interfaz usa Flutter y Material 3, con Supabase como backend.
 
 ## Estado
 
-Desarrollo por etapas. Actualmente está implementada la **Etapa 1**:
+Desarrollo por etapas. Actualmente están implementadas las **Etapas 1–4**:
 
 - Design system oscuro con gradiente ciruela, acentos verde lima y superficies claras.
 - `MascotMood` con los estados `neutral`, `judging`, `angry`, `smirking` y `proud`.
 - `RoastMascotCard`, con diálogo contextual e interacción para cambiar el roast.
 - Pantalla de vista previa en `lib/main.dart`.
+- Inicialización de Supabase al arrancar, con posibilidad de sobrescribir la configuración mediante `--dart-define`.
+- Migración SQL para `profiles_workspaces` y `tasks`, con RLS por usuario.
+- Modelos Dart serializables y contratos de repositorio.
+- Registro, inicio y cierre de sesión por email/contraseña.
+- Repositorios Supabase concretos para workspaces y tareas.
+- Dashboard con selector de espacios, métricas persistentes, mascota reactiva y tareas del día.
+- +100 XP por tarea, persistida una sola vez por workspace mediante trigger de base de datos.
+- Rachas por días de actividad, historial semanal, días libres configurables y comodines mensuales.
 
 ## Requisitos
 
-- Flutter SDK compatible con Dart 3.3 o posterior.
-- Para ejecutar en Android, iOS o web, las carpetas de plataforma correspondientes deben estar generadas.
-
-Este repositorio contiene actualmente el código Dart base; todavía no incluye el scaffold de Android/iOS/web. Para generarlo desde la raíz del proyecto, ejecuta:
-
-```sh
-flutter create --platforms=android,ios,web .
-```
+- Flutter 3.44 o posterior (Dart 3.12 o posterior).
+- El scaffold Android/iOS/web ya está generado en el repositorio.
+- En Supabase Auth, habilita el proveedor Email para registro y contraseña.
 
 Después:
 
 ```sh
 flutter pub get
-flutter run
+flutter run --dart-define=SUPABASE_URL=https://PROJECT_REF.supabase.co --dart-define=SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+```
+
+La configuración de desarrollo está en `lib/core/config/supabase_config.dart`; puedes sustituirla en tiempo de compilación con `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`. Aplica en orden las migraciones de `supabase/migrations/`: `20261012020000_persist_workspace_xp.sql` incorpora XP por workspace y el RPC de postergación; `20261012030000_streaks_freeze_and_wildcards.sql` añade el historial, la reposición mensual de comodines y los RPC de rachas. Usa únicamente una clave pública/publishable del cliente; nunca incluyas la `service_role` key en Flutter.
+
+Para verificar localmente:
+
+```sh
+flutter analyze
+flutter test
 ```
 
 ## Assets de la mascota
@@ -48,14 +60,22 @@ La tarjeta muestra una cara de respaldo mientras falten las imágenes. Antes de 
 ```text
 lib/
   main.dart
+  core/config/supabase_config.dart
+  data/models/
+  data/repositories/
+  domain/streak/
+  features/auth/
+  features/home/
+  features/streaks/
   theme/app_theme.dart
   widgets/roast_mascot_card.dart
 assets/mascot/
+supabase/migrations/
 ```
 
 ## Configuración y secretos
 
-No incluyas claves privadas, credenciales de servicio ni archivos `.env` reales en el repositorio. El `.gitignore` excluye archivos locales de entorno y credenciales de firma. Cuando se añada Supabase, usa variables de entorno para los valores locales y publica únicamente una plantilla sin secretos (por ejemplo, `.env.example`). Las claves públicas destinadas al cliente no sustituyen las políticas RLS.
+No incluyas claves privadas, credenciales de servicio ni archivos `.env` reales en el repositorio. El `.gitignore` excluye archivos locales de entorno y credenciales de firma. La URL y la clave publishable/anon son configuración de cliente; la seguridad de los datos depende de RLS. Nunca distribuyas la `service_role` key.
 
 ## Licencia
 

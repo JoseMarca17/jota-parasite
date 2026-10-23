@@ -12,6 +12,7 @@ coverage/
 
 # Android build output and signing credentials
 android/.gradle/
+android/local.properties
 android/app/debug/
 android/app/profile/
 android/app/release/
@@ -32,6 +33,7 @@ macos/Pods/
 # IDE and operating-system files
 .idea/
 .vscode/
+*.iml
 .DS_Store
 Thumbs.db
 Desktop.ini
