@@ -501,8 +501,8 @@ class _CalendarDayCell extends StatelessWidget {
     final foregroundColor = isSelected
         ? AppColors.textOnSurface
         : isCurrentMonth
-        ? AppColors.textPrimary
-        : AppColors.textSecondary.withValues(alpha: 0.55);
+        ? AppColors.textOnSurface
+        : AppColors.textOnSurface.withValues(alpha: 0.46);
 
     return Semantics(
       button: true,
