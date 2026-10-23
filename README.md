@@ -18,7 +18,7 @@ Desarrollo por etapas. Actualmente están implementadas las **Etapas 1–5**:
 - Dashboard con selector de espacios, métricas persistentes, mascota reactiva y tareas del día.
 - +100 XP por tarea, persistida una sola vez por workspace mediante trigger de base de datos.
 - Rachas por días de actividad, historial semanal, días libres configurables y comodines mensuales.
-- Calendario mensual con navegación por fechas, filtro por workspace, tareas del día y alta/completado de tareas.
+- Calendario mensual con navegación por fechas, filtro por workspace, tareas del día y alta/completado de tareas; navegación inferior entre Inicio, Calendario y Rachas.
 
 ## Requisitos
 

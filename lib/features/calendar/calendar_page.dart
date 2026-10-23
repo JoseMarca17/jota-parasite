@@ -7,6 +7,8 @@ import '../../data/repositories/supabase_profile_repository.dart';
 import '../../data/repositories/supabase_task_repository.dart';
 import '../../domain/calendar/calendar_date_utils.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../streaks/streaks_page.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({
@@ -192,6 +194,24 @@ class _CalendarPageState extends State<CalendarPage> {
     }
   }
 
+  void _onDestinationSelected(AppDestination destination) {
+    switch (destination) {
+      case AppDestination.home:
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        break;
+      case AppDestination.calendar:
+        break;
+      case AppDestination.streaks:
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(
+            builder: (_) => StreaksPage(client: widget.client),
+          ),
+          (route) => route.isFirst,
+        );
+        break;
+    }
+  }
+
   void _showMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(
@@ -282,6 +302,10 @@ class _CalendarPageState extends State<CalendarPage> {
                   ],
                 ),
               ),
+      ),
+      bottomNavigationBar: AppNavigationBar(
+        selectedDestination: AppDestination.calendar,
+        onDestinationSelected: _onDestinationSelected,
       ),
     );
   }

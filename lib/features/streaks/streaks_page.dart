@@ -7,6 +7,8 @@ import '../../data/repositories/supabase_profile_repository.dart';
 import '../../data/repositories/supabase_streak_repository.dart';
 import '../../domain/streak/streak_calculator.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../calendar/calendar_page.dart';
 
 class StreaksPage extends StatefulWidget {
   const StreaksPage({required this.client, super.key});
@@ -141,6 +143,27 @@ class _StreaksPageState extends State<StreaksPage> {
     }
   }
 
+  void _onDestinationSelected(AppDestination destination) {
+    switch (destination) {
+      case AppDestination.home:
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        break;
+      case AppDestination.calendar:
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(
+            builder: (_) => CalendarPage(
+              client: widget.client,
+              initialWorkspaceId: _selectedWorkspaceId,
+            ),
+          ),
+          (route) => route.isFirst,
+        );
+        break;
+      case AppDestination.streaks:
+        break;
+    }
+  }
+
   void _showError(Object error) {
     if (!mounted) return;
     final message = error is PostgrestException
@@ -165,6 +188,10 @@ class _StreaksPageState extends State<StreaksPage> {
             : _workspaces.isEmpty
             ? const _NoWorkspaceState()
             : _buildContent(),
+      ),
+      bottomNavigationBar: AppNavigationBar(
+        selectedDestination: AppDestination.streaks,
+        onDestinationSelected: _onDestinationSelected,
       ),
     );
   }

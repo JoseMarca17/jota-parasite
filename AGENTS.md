@@ -25,6 +25,7 @@
 - Historial semanal en `workspace_streak_days`; el selector de días libres congela/descongela sábado y domingo.
 - La finalización de tareas pasa por RPC para actualizar tarea, XP y racha de forma transaccional.
 - Calendario mensual en `lib/features/calendar/calendar_page.dart`: navegación de meses, indicadores por día, filtro de workspace, agenda del día y alta/finalización de tareas.
+- Barra inferior persistente con navegación entre Inicio, Calendario y Rachas en `lib/widgets/app_navigation_bar.dart`.
 - Flutter platforms (Android, iOS, web, además de escritorio) ya fueron generadas con `flutter create .`.
 
 ### Decisiones confirmadas por el usuario
@@ -56,16 +57,16 @@ El backfill del historial de tareas existentes usa la fecha UTC como aproximaci�
 ## Verificaciones conocidas
 
 - `flutter analyze`: **sin issues** en la última verificación.
-- `flutter test`: **11 pruebas pasan** (modelos, calendario, cálculo de rachas y widget de mascota).
+- `flutter test`: **13 pruebas pasan** (modelos, calendario, navegación, cálculo de rachas y widget de mascota).
 - `dart format`: aplicado a los archivos Dart modificados; verificar con `dart format --output=none --set-exit-if-changed ...` antes de continuar.
-- `flutter build web`: **completado correctamente** en 79 s tras implementar el calendario; solo avisos no bloqueantes de CupertinoIcons/WASM.
+- `flutter build web`: **completado correctamente** en 71 s tras añadir navegación inferior; solo avisos no bloqueantes de CupertinoIcons/WASM.
 - `flutter build apk --debug` no se pudo completar: este entorno no tiene Android SDK. El scaffold Android sí existe.
 - Migraciones 2 y 3: aplicadas y verificadas en Supabase; funciones RPC, trigger, FK, RLS y grants confirmados.
 - El build web anterior emitió un aviso no bloqueante de fuentes CupertinoIcons/WASM.
 
 ## Siguiente trabajo
 
-1. Probar el calendario con sesión real: navegar meses, seleccionar día, filtrar workspaces, crear tarea y completar tarea.
+1. Probar el calendario y la navegación inferior con sesión real: seleccionar las tres secciones, navegar meses, seleccionar día, filtrar workspaces, crear tarea y completar tarea.
 2. Reconciliar el historial remoto con los prefijos de migración locales antes de usar `supabase db push`; la migración base 1 no está registrada remotamente y las versiones de 2/3 fueron generadas por la API.
 3. Para validar Android, instalar/configurar Android SDK y ejecutar `flutter build apk --debug`.
 
