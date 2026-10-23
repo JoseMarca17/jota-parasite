@@ -57,7 +57,7 @@ El backfill del historial de tareas existentes usa la fecha UTC como aproximaci�
 ## Verificaciones conocidas
 
 - `flutter analyze`: **sin issues** en la última verificación.
-- `flutter test`: **13 pruebas pasan** (modelos, calendario, navegación, cálculo de rachas y widget de mascota).
+- `flutter test`: **12 pruebas pasan** (modelos, calendario, navegación, cálculo de rachas y widget de mascota).
 - `dart format`: aplicado a los archivos Dart modificados; verificar con `dart format --output=none --set-exit-if-changed ...` antes de continuar.
 - `flutter build web`: **completado correctamente** en 71 s tras añadir navegación inferior; solo avisos no bloqueantes de CupertinoIcons/WASM.
 - `flutter build apk --debug` no se pudo completar: este entorno no tiene Android SDK. El scaffold Android sí existe.
