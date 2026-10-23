@@ -7,6 +7,7 @@ import '../../data/repositories/supabase_profile_repository.dart';
 import '../../data/repositories/supabase_streak_repository.dart';
 import '../../data/repositories/supabase_task_repository.dart';
 import '../../domain/streak/streak_calculator.dart';
+import '../calendar/calendar_page.dart';
 import '../streaks/streaks_page.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/roast_mascot_card.dart';
@@ -290,6 +291,27 @@ class _HomeDashboardPageState extends State<HomeDashboardPage> {
     }
   }
 
+  Future<void> _openCalendar() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => CalendarPage(
+          client: widget.client,
+          initialWorkspaceId: _activeWorkspaceId,
+        ),
+      ),
+    );
+    if (mounted) await _load(showLoading: false);
+  }
+
+  Future<void> _openStreaks() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => StreaksPage(client: widget.client),
+      ),
+    );
+    if (mounted) await _load(showLoading: false);
+  }
+
   void _showError(Object error) {
     if (!mounted) return;
     ScaffoldMessenger.of(
@@ -356,46 +378,89 @@ class _HomeDashboardPageState extends State<HomeDashboardPage> {
   @override
   Widget build(BuildContext context) {
     final user = widget.client.auth.currentUser;
+    final compactAppBar = MediaQuery.sizeOf(context).width < 520;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jota Parasite'),
-        actions: [
-          IconButton(
-            tooltip: 'Rachas y comodines',
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => StreaksPage(client: widget.client),
+        actions: compactAppBar
+            ? [
+                PopupMenuButton<_DashboardAction>(
+                  tooltip: 'Acciones',
+                  onSelected: (action) {
+                    switch (action) {
+                      case _DashboardAction.calendar:
+                        _openCalendar();
+                        break;
+                      case _DashboardAction.streaks:
+                        _openStreaks();
+                        break;
+                      case _DashboardAction.signOut:
+                        _signOut();
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: _DashboardAction.calendar,
+                      child: _DashboardMenuLabel(
+                        icon: Icons.calendar_month_rounded,
+                        label: 'Calendario',
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: _DashboardAction.streaks,
+                      child: _DashboardMenuLabel(
+                        icon: Icons.local_fire_department_rounded,
+                        label: 'Rachas y comodines',
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: _DashboardAction.signOut,
+                      child: _DashboardMenuLabel(
+                        icon: Icons.logout_rounded,
+                        label: 'Cerrar sesión',
+                      ),
+                    ),
+                  ],
                 ),
-              );
-              if (mounted) await _load(showLoading: false);
-            },
-            icon: const Icon(Icons.local_fire_department_rounded),
-          ),
-          if (user?.email != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Center(
-                child: Tooltip(
-                  message: user!.email!,
-                  child: CircleAvatar(
-                    radius: 17,
-                    backgroundColor: AppColors.action,
-                    child: Text(
-                      user.email!.substring(0, 1).toUpperCase(),
-                      style: const TextStyle(color: AppColors.textPrimary),
+              ]
+            : [
+                IconButton(
+                  tooltip: 'Calendario',
+                  onPressed: _openCalendar,
+                  icon: const Icon(Icons.calendar_month_rounded),
+                ),
+                IconButton(
+                  tooltip: 'Rachas y comodines',
+                  onPressed: _openStreaks,
+                  icon: const Icon(Icons.local_fire_department_rounded),
+                ),
+                if (user?.email != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Center(
+                      child: Tooltip(
+                        message: user!.email!,
+                        child: CircleAvatar(
+                          radius: 17,
+                          backgroundColor: AppColors.action,
+                          child: Text(
+                            user.email!.substring(0, 1).toUpperCase(),
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
+                IconButton(
+                  tooltip: 'Cerrar sesión',
+                  onPressed: _signOut,
+                  icon: const Icon(Icons.logout_rounded),
                 ),
-              ),
-            ),
-          IconButton(
-            tooltip: 'Cerrar sesión',
-            onPressed: _signOut,
-            icon: const Icon(Icons.logout_rounded),
-          ),
-        ],
+              ],
       ),
       floatingActionButton: _workspaces.isEmpty || _isLoading
           ? null
@@ -510,6 +575,20 @@ class _HomeDashboardPageState extends State<HomeDashboardPage> {
           ),
       ],
     );
+  }
+}
+
+enum _DashboardAction { calendar, streaks, signOut }
+
+class _DashboardMenuLabel extends StatelessWidget {
+  const _DashboardMenuLabel({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [Icon(icon), const SizedBox(width: 12), Text(label)]);
   }
 }
 

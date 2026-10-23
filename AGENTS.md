@@ -3,7 +3,7 @@
 ## Reglas del proyecto
 
 - Flutter/Material 3, interfaz y mensajes en español; conservar el tema ciruela/neón y el tono sarcástico.
-- El usuario trabaja por etapas. **Etapas 1–4 están implementadas; no empezar Etapa 5 (calendario) hasta que el usuario apruebe expresamente la Etapa 4.**
+- El usuario trabaja por etapas. Etapas 1–4 están aprobadas; Etapa 5 (calendario) está en desarrollo. No iniciar una etapa posterior sin aprobación expresa de la etapa actual.
 - Tras cambios Dart, ejecutar `flutter analyze` y `flutter test`; formatear los archivos Dart modificados.
 - No desplegar cambios en Supabase remoto ni ejecutar migraciones en producción sin autorización explícita.
 - En Flutter solo usar una publishable/anon key. Nunca incluir una `service_role` key en el cliente, Git o este archivo.
@@ -11,7 +11,7 @@
 
 ## Estado actual
 
-**Etapa 4 (Rachas & Comodines) está implementada en el código.** Las migraciones de XP y rachas ya están aplicadas y verificadas en el Supabase real. Quedan las pruebas funcionales con una sesión autenticada y la aprobación expresa de Etapa 4. No se ha iniciado Etapa 5.
+**Etapa 4 (Rachas & Comodines) está aprobada por el usuario.** Sus migraciones están aplicadas y verificadas en Supabase. **Etapa 5 (Calendario) ya está implementada en el código local**; falta validar su uso con la sesión autenticada y publicar el commit de esta etapa.
 
 ### Implementado
 
@@ -24,6 +24,7 @@
 - `StreakCalculator` en `lib/domain/streak/streak_calculator.dart`: cálculo de racha efectiva, días congelados y elegibilidad de un comodín.
 - Historial semanal en `workspace_streak_days`; el selector de días libres congela/descongela sábado y domingo.
 - La finalización de tareas pasa por RPC para actualizar tarea, XP y racha de forma transaccional.
+- Calendario mensual en `lib/features/calendar/calendar_page.dart`: navegación de meses, indicadores por día, filtro de workspace, agenda del día y alta/finalización de tareas.
 - Flutter platforms (Android, iOS, web, además de escritorio) ya fueron generadas con `flutter create .`.
 
 ### Decisiones confirmadas por el usuario
@@ -55,19 +56,18 @@ El backfill del historial de tareas existentes usa la fecha UTC como aproximaci�
 ## Verificaciones conocidas
 
 - `flutter analyze`: **sin issues** en la última verificación.
-- `flutter test`: **8 pruebas pasan** (modelos, cálculo de rachas y widget de mascota).
-- `dart format --output=none --set-exit-if-changed lib/features lib/data/models lib/data/repositories lib/domain test`: **sin cambios pendientes**.
-- `flutter build web`: **completado correctamente** en 93 s; solo avisos no bloqueantes de CupertinoIcons/WASM.
+- `flutter test`: **11 pruebas pasan** (modelos, calendario, cálculo de rachas y widget de mascota).
+- `dart format`: aplicado a los archivos Dart modificados; verificar con `dart format --output=none --set-exit-if-changed ...` antes de continuar.
+- `flutter build web`: **completado correctamente** en 79 s tras implementar el calendario; solo avisos no bloqueantes de CupertinoIcons/WASM.
 - `flutter build apk --debug` no se pudo completar: este entorno no tiene Android SDK. El scaffold Android sí existe.
 - Migraciones 2 y 3: aplicadas y verificadas en Supabase; funciones RPC, trigger, FK, RLS y grants confirmados.
 - El build web anterior emitió un aviso no bloqueante de fuentes CupertinoIcons/WASM.
 
 ## Siguiente trabajo
 
-1. Probar con sesión real: registro/login, crear workspace y tarea, completar (XP/racha una vez), desmarcar/recompletar, postergar, días congelados, recarga mensual y salvamento de un día.
+1. Probar el calendario con sesión real: navegar meses, seleccionar día, filtrar workspaces, crear tarea y completar tarea.
 2. Reconciliar el historial remoto con los prefijos de migración locales antes de usar `supabase db push`; la migración base 1 no está registrada remotamente y las versiones de 2/3 fueron generadas por la API.
 3. Para validar Android, instalar/configurar Android SDK y ejecutar `flutter build apk --debug`.
-4. Confirmar Etapa 4 con el usuario; solo entonces empezar Etapa 5.
 
 ## Continuar desde otro dispositivo
 

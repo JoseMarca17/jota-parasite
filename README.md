@@ -4,7 +4,7 @@ Aplicación móvil personal de productividad gamificada, organizada por espacios
 
 ## Estado
 
-Desarrollo por etapas. Actualmente están implementadas las **Etapas 1–4**:
+Desarrollo por etapas. Actualmente están implementadas las **Etapas 1–5**:
 
 - Design system oscuro con gradiente ciruela, acentos verde lima y superficies claras.
 - `MascotMood` con los estados `neutral`, `judging`, `angry`, `smirking` y `proud`.
@@ -18,6 +18,7 @@ Desarrollo por etapas. Actualmente están implementadas las **Etapas 1–4**:
 - Dashboard con selector de espacios, métricas persistentes, mascota reactiva y tareas del día.
 - +100 XP por tarea, persistida una sola vez por workspace mediante trigger de base de datos.
 - Rachas por días de actividad, historial semanal, días libres configurables y comodines mensuales.
+- Calendario mensual con navegación por fechas, filtro por workspace, tareas del día y alta/completado de tareas.
 
 ## Requisitos
 
@@ -65,6 +66,7 @@ lib/
   data/repositories/
   domain/streak/
   features/auth/
+  features/calendar/
   features/home/
   features/streaks/
   theme/app_theme.dart

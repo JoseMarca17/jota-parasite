@@ -224,11 +224,16 @@ class _StreaksPageState extends State<StreaksPage> {
                 : _saveStreak,
           ),
           const SizedBox(height: 16),
-          Container(
-            decoration: AppTheme.surfaceCardDecoration,
+          Material(
+            color: Colors.transparent,
             child: SwitchListTile.adaptive(
               value: weekendFrozen,
               onChanged: _saving ? null : _toggleWeekendFreeze,
+              tileColor: AppColors.surfaceSoft,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadii.card),
+                side: const BorderSide(color: AppColors.border),
+              ),
               activeThumbColor: AppColors.action,
               secondary: const Icon(
                 Icons.nights_stay_outlined,
