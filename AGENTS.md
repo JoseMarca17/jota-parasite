@@ -11,7 +11,7 @@
 
 ## Estado actual
 
-**Etapa 4 (Rachas & Comodines) está aprobada por el usuario.** Sus migraciones están aplicadas y verificadas en Supabase. **Etapa 5 (Calendario) ya está implementada en el código local**; falta validar su uso con la sesión autenticada y publicar el commit de esta etapa.
+**Etapa 4 (Rachas & Comodines) está aprobada por el usuario.** Sus migraciones están aplicadas y verificadas en Supabase. **Etapa 5 (Calendario) está implementada y publicada**; falta completar su prueba manual en el navegador con la sesión autenticada.
 
 ### Implementado
 
@@ -48,7 +48,7 @@ Las migraciones 2 y 3 ya están aplicadas en el proyecto Supabase `jota-parasite
 - `20261012020000_persist_workspace_xp` — versión registrada remotamente `20261023225218`.
 - `20261012030000_streaks_freeze_and_wildcards` — versión registrada remotamente `20261023225336`.
 
-La migración base 1 no figura en el historial remoto, aunque las tablas base ya existían antes de estos cambios. **No ejecutar `supabase db push` sin reconciliar primero esa línea base:** podría aplicar la migración 1 después y volver a conceder permisos de tabla amplios. La API de gestión de Supabase asignó versiones remotas distintas a los prefijos locales; sincronizar ese historial antes de usar la CLI.
+La migración base 1 no figura en el historial remoto, aunque las tablas base ya existían antes de estos cambios. **No ejecutar `supabase db push` sin reconciliar primero esa línea base:** podría aplicar la migración 1 después y volver a conceder permisos de tabla amplios. La API de gestión de Supabase asignó versiones remotas distintas a los prefijos locales; sincronizar ese historial antes de usar la CLI. Supabase CLI no está instalado en este entorno.
 
 La inspección inicial encontró permisos directos amplios para `anon` y `authenticated`; la migración 2 los revocó y concedió a `authenticated` solo los permisos de columnas necesarios. La migración 3 añadió el índice único compuesto requerido y la FK workspace/usuario que faltaban en el esquema remoto. Ahora RLS está activa en las tres tablas; `anon` no tiene permisos de tabla y XP/racha no son actualizables directamente por `authenticated`.
 
