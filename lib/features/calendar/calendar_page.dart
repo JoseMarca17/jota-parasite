@@ -3,8 +3,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/models/profile_workspace_model.dart';
 import '../../data/models/task_model.dart';
+import '../../data/repositories/profile_workspace_repository.dart';
 import '../../data/repositories/supabase_profile_repository.dart';
 import '../../data/repositories/supabase_task_repository.dart';
+import '../../data/repositories/task_repository.dart';
 import '../../domain/calendar/calendar_date_utils.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_navigation_bar.dart';
@@ -12,13 +14,23 @@ import '../streaks/streaks_page.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({
-    required this.client,
+    this.client,
     this.initialWorkspaceId,
+    this.initialDate,
+    this.profileRepository,
+    this.taskRepository,
     super.key,
-  });
+  }) : assert(
+         client != null ||
+             (profileRepository != null && taskRepository != null),
+         'Provide a Supabase client or both calendar repositories.',
+       );
 
-  final SupabaseClient client;
+  final SupabaseClient? client;
   final String? initialWorkspaceId;
+  final DateTime? initialDate;
+  final ProfileWorkspaceRepository? profileRepository;
+  final TaskRepository? taskRepository;
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
@@ -27,8 +39,8 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   static const _allWorkspaces = '__all_workspaces__';
 
-  late final SupabaseProfileRepository _profilesRepository;
-  late final SupabaseTaskRepository _tasksRepository;
+  late final ProfileWorkspaceRepository _profilesRepository;
+  late final TaskRepository _tasksRepository;
   late DateTime _visibleMonth;
   late DateTime _selectedDate;
   String? _selectedWorkspaceId;
@@ -41,12 +53,14 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    final today = DateTime.now();
+    final today = widget.initialDate ?? DateTime.now();
     _visibleMonth = CalendarDateUtils.monthStart(today);
     _selectedDate = CalendarDateUtils.dateOnly(today);
     _selectedWorkspaceId = widget.initialWorkspaceId;
-    _profilesRepository = SupabaseProfileRepository(widget.client);
-    _tasksRepository = SupabaseTaskRepository(widget.client);
+    _profilesRepository =
+        widget.profileRepository ?? SupabaseProfileRepository(widget.client!);
+    _tasksRepository =
+        widget.taskRepository ?? SupabaseTaskRepository(widget.client!);
     _load();
   }
 
@@ -204,7 +218,7 @@ class _CalendarPageState extends State<CalendarPage> {
       case AppDestination.streaks:
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<void>(
-            builder: (_) => StreaksPage(client: widget.client),
+            builder: (_) => StreaksPage(client: widget.client!),
           ),
           (route) => route.isFirst,
         );
